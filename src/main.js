@@ -13,12 +13,11 @@ const myLevel = level(
   [
     "===========",
     "=         =",
-    "=         =",
-    "=====     =",
-    "=   =     =",
-    "=   =  =  =",
+    "= ==== == =",
     "=      =  =",
-    "=      ====",
+    "= ==== == =",
+    "= =       =",
+    "= = == ====",
     "=         =",
     "===========",
   ],
@@ -33,8 +32,7 @@ const myLevel = level(
         body({ isStatic: true }),
         tile({ isObstacle: true }),
       ],
-      $: () => [sprite("coin"), area(), pos(0, -9)],
-      "^": () => [sprite("spike"), area(), "danger"],
+      "^": () => [sprite("spike"), area()],
     },
   }
 );
@@ -43,9 +41,9 @@ const bean = myLevel.spawn(
   [
     sprite("bean"),
     anchor("center"),
-    pos(64, 64),
+    pos(32, 32),
     tile(),
-    agent({ agentSpeed: 640, allowDiagonals: true }),
+    agent({ speed: 320, allowDiagonals: false }),
     "bean",
   ],
   vec2(1, 1)
@@ -53,3 +51,11 @@ const bean = myLevel.spawn(
 onClick(() => {
   bean.setTarget(mousePos());
 });
+for (let i = 0; i < myLevel.numRows(); i++) {
+  for (let j = 0; j < myLevel.numColumns(); j++) {
+    const objs = myLevel.getAt(vec2(j, i));
+    if (objs.length == 0) {
+      myLevel.spawn([sprite("coin")], vec2(j, i));
+    }
+  }
+}
