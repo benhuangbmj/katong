@@ -8,54 +8,91 @@ loadSprite("bean", "sprites/bean.png");
 loadSprite("coin", "sprites/coin.png");
 loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
+scene("game", () => {
+  let coinCount = 0;
+  const myLevel = level(
+    [
+      "===========",
+      "=         =",
+      "= ==== == =",
+      "=      =  =",
+      "= ==== == =",
+      "= =       =",
+      "= = == ====",
+      "=         =",
+      "===========",
+    ],
+    {
+      tileWidth: 64,
+      tileHeight: 64,
 
-const myLevel = level(
-  [
-    "===========",
-    "=         =",
-    "= ==== == =",
-    "=      =  =",
-    "= ==== == =",
-    "= =       =",
-    "= = == ====",
-    "=         =",
-    "===========",
-  ],
-  {
-    tileWidth: 64,
-    tileHeight: 64,
-
-    tiles: {
-      "=": () => [
-        sprite("steel"),
-        area(),
-        body({ isStatic: true }),
-        tile({ isObstacle: true }),
-      ],
-      "^": () => [sprite("spike"), area()],
-    },
-  }
-);
-add([myLevel]);
-const bean = myLevel.spawn(
-  [
-    sprite("bean"),
-    anchor("center"),
-    pos(32, 32),
-    tile(),
-    agent({ speed: 320, allowDiagonals: false }),
-    "bean",
-  ],
-  vec2(1, 1)
-);
-onClick(() => {
-  bean.setTarget(mousePos());
-});
-for (let i = 0; i < myLevel.numRows(); i++) {
-  for (let j = 0; j < myLevel.numColumns(); j++) {
-    const objs = myLevel.getAt(vec2(j, i));
-    if (objs.length == 0) {
-      myLevel.spawn([sprite("coin")], vec2(j, i));
+      tiles: {
+        "=": () => [
+          sprite("steel"),
+          area(),
+          body({ isStatic: true }),
+          tile({ isObstacle: true }),
+        ],
+        "^": () => [sprite("spike"), area()],
+      },
+    }
+  );
+  add([myLevel]);
+  const bean = myLevel.spawn(
+    [
+      sprite("bean"),
+      anchor("center"),
+      area(),
+      pos(32, 32),
+      tile(),
+      agent({ speed: 2048, allowDiagonals: false }),
+      "bean",
+    ],
+    vec2(1, 1)
+  );
+  onClick(() => {
+    bean.setTarget(mousePos());
+  });
+  for (let i = 0; i < myLevel.numRows(); i++) {
+    for (let j = 0; j < myLevel.numColumns(); j++) {
+      const objs = myLevel.getAt(vec2(j, i));
+      if (objs.length == 0) {
+        myLevel.spawn([sprite("coin"), area()], vec2(j, i));
+        coinCount++;
+        const coin = myLevel.getAt(vec2(j, i))[0];
+        coin.onCollide(() => {
+          destroy(coin);
+          coinCount--;
+          if (coinCount == 0) {
+            go("end");
+          }
+        });
+      }
     }
   }
-}
+});
+
+scene("end", () => {
+  add([
+    text("You Win!", { size: 128 }),
+    pos(center()),
+    anchor("center"),
+    color("red"),
+  ]);
+  onKeyPress(() => {
+    go("game");
+  });
+});
+
+scene("ready?", () => {
+  add([
+    text("Press a key to start a game", { size: 32 }),
+    pos(center()),
+    anchor("center"),
+    color("blue"),
+  ]);
+  onKeyPress(() => {
+    go("game");
+  });
+});
+go("ready?");
