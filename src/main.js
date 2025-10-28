@@ -99,6 +99,9 @@ scene("end", () => {
   onKeyPress(() => {
     go("game");
   });
+  onTouchEnd(() => {
+    go("game");
+  });
 });
 
 scene("lost", () => {
@@ -109,6 +112,9 @@ scene("lost", () => {
     color("red"),
   ]);
   onKeyPress(() => {
+    go("game");
+  });
+  onTouchEnd(() => {
     go("game");
   });
 });
