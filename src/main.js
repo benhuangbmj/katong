@@ -123,5 +123,8 @@ scene("ready?", () => {
   onKeyPress(() => {
     go("game");
   });
+  onTouchEnd(() => {
+    go("game");
+  });
 });
 go("ready?");
