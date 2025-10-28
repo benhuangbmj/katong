@@ -8,6 +8,7 @@ loadSprite("bean", "sprites/bean.png");
 loadSprite("coin", "sprites/coin.png");
 loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
+loadSprite("ghosty", "sprites/ghosty.png");
 scene("game", () => {
   let coinCount = 0;
   const myLevel = level(
@@ -44,12 +45,28 @@ scene("game", () => {
       anchor("center"),
       area(),
       pos(32, 32),
-      tile(),
-      agent({ speed: 2048, allowDiagonals: false }),
+      agent({ speed: 150, allowDiagonals: false }),
       "bean",
     ],
     vec2(1, 1)
   );
+  const ghost = myLevel.spawn(
+    [
+      sprite("ghosty"),
+      anchor("center"),
+      area(),
+      pos(32, 32),
+      agent({ speed: 100, allowDiagonals: false }),
+      "ghost",
+    ],
+    vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
+  );
+  ghost.onUpdate(() => {
+    ghost.setTarget(bean.pos);
+  });
+  bean.onCollide("ghost", () => {
+    go("lost");
+  });
   onClick(() => {
     bean.setTarget(mousePos());
   });
@@ -60,7 +77,7 @@ scene("game", () => {
         myLevel.spawn([sprite("coin"), area()], vec2(j, i));
         coinCount++;
         const coin = myLevel.getAt(vec2(j, i))[0];
-        coin.onCollide(() => {
+        coin.onCollide("bean", () => {
           destroy(coin);
           coinCount--;
           if (coinCount == 0) {
@@ -75,6 +92,18 @@ scene("game", () => {
 scene("end", () => {
   add([
     text("You Win!", { size: 128 }),
+    pos(center()),
+    anchor("center"),
+    color("red"),
+  ]);
+  onKeyPress(() => {
+    go("game");
+  });
+});
+
+scene("lost", () => {
+  add([
+    text("You Die!", { size: 128 }),
     pos(center()),
     anchor("center"),
     color("red"),
