@@ -44,6 +44,7 @@ scene("game", () => {
       sprite("bean"),
       anchor("center"),
       area(),
+      body(),
       pos(32, 32),
       agent({ speed: 150, allowDiagonals: false }),
       "bean",
@@ -66,6 +67,33 @@ scene("game", () => {
   });
   bean.onCollide("ghost", () => {
     go("lost");
+  });
+  let dir = [0, 0];
+  onKeyPress((key) => {
+    switch (key) {
+      case "right": {
+        dir = [150, 0];
+        break;
+      }
+      case "left": {
+        dir = [-150, 0];
+        break;
+      }
+      case "up": {
+        dir = [0, -150];
+        break;
+      }
+      case "down": {
+        dir = [0, 150];
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
+  bean.onUpdate(() => {
+    bean.move(...dir);
   });
   onClick(() => {
     bean.setTarget(mousePos());
@@ -133,4 +161,4 @@ scene("ready?", () => {
     go("game");
   });
 });
-go("ready?");
+go("game");
