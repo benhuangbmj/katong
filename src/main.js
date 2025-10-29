@@ -10,6 +10,7 @@ loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
 loadSprite("ghosty", "sprites/ghosty.png");
 scene("game", () => {
+  const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
   let coinCount = 0;
   const myLevel = level(
     [
@@ -24,8 +25,8 @@ scene("game", () => {
       "===========",
     ],
     {
-      tileWidth: 64,
-      tileHeight: 64,
+      tileWidth: TILE_WIDTH,
+      tileHeight: TILE_HEIGHT,
 
       tiles: {
         "=": () => [
