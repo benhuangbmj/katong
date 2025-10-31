@@ -1,7 +1,9 @@
 import kaplay from "kaplay";
 //import "kaplay/global"; // uncomment if you want to use without the k. prefix
 
-kaplay();
+kaplay({
+  debugKey: "f2",
+});
 
 loadRoot("./"); // A good idea for Itch.io publishing later
 loadSprite("bean", "sprites/bean.png");
@@ -10,6 +12,9 @@ loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
 loadSprite("ghosty", "sprites/ghosty.png");
 scene("game", () => {
+  let dir = [0, 0];
+  const speed = 150;
+  const difficulty = 0.8;
   const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
   let coinCount = 0;
   const myLevel = level(
@@ -44,9 +49,9 @@ scene("game", () => {
     [
       sprite("bean"),
       anchor("center"),
-      area(),
+      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
       body(),
-      pos(32, 32),
+      pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: 150, allowDiagonals: false }),
       "bean",
     ],
@@ -57,8 +62,7 @@ scene("game", () => {
       sprite("ghosty"),
       anchor("center"),
       area(),
-      pos(32, 32),
-      agent({ speed: 100, allowDiagonals: false }),
+      agent({ speed: speed * difficulty, allowDiagonals: false }),
       "ghost",
     ],
     vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
@@ -69,23 +73,22 @@ scene("game", () => {
   bean.onCollide("ghost", () => {
     go("lost");
   });
-  let dir = [0, 0];
   onKeyPress((key) => {
     switch (key) {
       case "right": {
-        dir = [150, 0];
+        dir = [speed, 0];
         break;
       }
       case "left": {
-        dir = [-150, 0];
+        dir = [-speed, 0];
         break;
       }
       case "up": {
-        dir = [0, -150];
+        dir = [0, -speed];
         break;
       }
       case "down": {
-        dir = [0, 150];
+        dir = [0, speed];
         break;
       }
       default: {
