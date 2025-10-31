@@ -53,6 +53,7 @@ scene("game", () => {
       body(),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: 150, allowDiagonals: false }),
+      tile(),
       "bean",
     ],
     vec2(1, 1)
@@ -74,27 +75,40 @@ scene("game", () => {
     go("lost");
   });
   onKeyPress((key) => {
-    switch (key) {
-      case "right": {
-        dir = [speed, 0];
-        break;
+    const currentTile = bean.tilePos;
+    const currentPos = myLevel.tile2Pos(currentTile);
+    const targetPos = [
+      currentPos.x + TILE_WIDTH / 2,
+      currentPos.y + TILE_HEIGHT / 2,
+    ];
+    dir = [0, 0];
+    bean.unuse("body");
+    bean.setTarget(vec2(...targetPos));
+    const adjustPos = bean.onTargetReached(() => {
+      bean.use(body());
+      switch (key) {
+        case "right": {
+          dir = [speed, 0];
+          break;
+        }
+        case "left": {
+          dir = [-speed, 0];
+          break;
+        }
+        case "up": {
+          dir = [0, -speed];
+          break;
+        }
+        case "down": {
+          dir = [0, speed];
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      case "left": {
-        dir = [-speed, 0];
-        break;
-      }
-      case "up": {
-        dir = [0, -speed];
-        break;
-      }
-      case "down": {
-        dir = [0, speed];
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+      adjustPos.cancel();
+    });
   });
   bean.onUpdate(() => {
     bean.move(...dir);
