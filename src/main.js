@@ -28,6 +28,15 @@ scene("game", () => {
       "= = == ====",
       "=         =",
       "===========",
+      // "===========",
+      // "=         =",
+      // "=         =",
+      // "=         =",
+      // "=         =",
+      // "=         =",
+      // "=         =",
+      // "=         =",
+      // "===========",
     ],
     {
       tileWidth: TILE_WIDTH,
@@ -62,18 +71,36 @@ scene("game", () => {
     [
       sprite("ghosty"),
       anchor("center"),
-      area(),
+      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
+      pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: speed * difficulty, allowDiagonals: false }),
       "ghost",
     ],
     vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
   );
-  ghost.onUpdate(() => {
-    ghost.setTarget(bean.pos);
-  });
+  const chasePlayer = () => {
+    return ghost.onUpdate(() => {
+      ghost.setTarget(bean.pos);
+    });
+  };
+  let chasingPlayer = chasePlayer();
   bean.onCollide("ghost", () => {
     go("lost");
   });
+  function adjust(obj, cb = () => {}) {
+    const currentTile = obj.tilePos;
+    const currentPos = myLevel.tile2Pos(currentTile);
+    const targetPos = [
+      currentPos.x + TILE_WIDTH / 2,
+      currentPos.y + TILE_HEIGHT / 2,
+    ];
+    obj.unuse("body");
+    obj.setTarget(vec2(...targetPos));
+    obj.onTargetReached(() => {
+      obj.use(body());
+      cb();
+    });
+  }
   onKeyPress((key) => {
     const currentTile = bean.tilePos;
     const currentPos = myLevel.tile2Pos(currentTile);
@@ -120,7 +147,17 @@ scene("game", () => {
     for (let j = 0; j < myLevel.numColumns(); j++) {
       const objs = myLevel.getAt(vec2(j, i));
       if (objs.length == 0) {
-        myLevel.spawn([sprite("coin"), area()], vec2(j, i));
+        myLevel.spawn(
+          [
+            sprite("coin"),
+            area(),
+            anchor("center"),
+            scale(1.2),
+            pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
+            z(-1),
+          ],
+          vec2(j, i)
+        );
         coinCount++;
         const coin = myLevel.getAt(vec2(j, i))[0];
         coin.onCollide("bean", () => {
