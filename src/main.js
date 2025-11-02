@@ -66,7 +66,7 @@ scene("game", () => {
     [
       sprite("bean"),
       anchor("center"),
-      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
+      area(),
       body(),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: speed, allowDiagonals: false }),
@@ -79,7 +79,7 @@ scene("game", () => {
     [
       sprite("ghosty"),
       anchor("center"),
-      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
+      area({ shape: new Rect(vec2(0, 0), 0, 0) }),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: speed * difficulty, allowDiagonals: false }),
       tile({ isObstacle: true }),
