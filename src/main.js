@@ -117,10 +117,14 @@ scene("game", () => {
       currentPos.y + TILE_HEIGHT / 2,
     ];
     dir = [0, 0];
-    bean.unuse("body");
+    if (bean.has("body")) {
+      bean.unuse("body");
+    }
     bean.setTarget(vec2(...targetPos));
     const adjustPos = bean.onTargetReached(() => {
-      bean.use(body());
+      if (!bean.has("body")) {
+        bean.use(body());
+      }
       switch (key) {
         case "right": {
           dir = [speed, 0];
@@ -149,6 +153,10 @@ scene("game", () => {
     bean.move(...dir);
   });
   onClick(() => {
+    dir = [0, 0];
+    if (bean.has("body")) {
+      bean.unuse("body");
+    }
     bean.setTarget(snapToTileCenter({ level: myLevel, pos: mousePos() }));
   });
   for (let i = 0; i < myLevel.numRows(); i++) {
