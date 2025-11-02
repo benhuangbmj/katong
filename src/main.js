@@ -82,6 +82,7 @@ scene("game", () => {
       area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: speed * difficulty, allowDiagonals: false }),
+      tile({ isObstacle: true }),
       "ghost",
     ],
     vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
@@ -153,6 +154,7 @@ scene("game", () => {
     bean.move(...dir);
   });
   onClick(() => {
+    myLevel.invalidateNavigationMap();
     dir = [0, 0];
     if (bean.has("body")) {
       bean.unuse("body");
@@ -168,7 +170,6 @@ scene("game", () => {
             sprite("coin"),
             area(),
             anchor("center"),
-            scale(1.2),
             pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
             z(-1),
           ],
