@@ -66,7 +66,7 @@ scene("game", () => {
     [
       sprite("bean"),
       anchor("center"),
-      area(),
+      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
       body(),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
       agent({ speed: speed, allowDiagonals: false }),
