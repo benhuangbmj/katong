@@ -11,6 +11,15 @@ loadSprite("coin", "sprites/coin.png");
 loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
 loadSprite("ghosty", "sprites/ghosty.png");
+function snapToTileCenter({ level, pos }) {
+  const tilePos = level.pos2Tile(pos);
+  const tileWorldPos = level.tile2Pos(tilePos);
+  const output = vec2(
+    tileWorldPos.x + 0.5 * level.tileWidth(),
+    tileWorldPos.y + 0.5 * level.tileHeight()
+  );
+  return output;
+}
 scene("game", () => {
   let dir = [0, 0];
   const speed = 150;
@@ -41,7 +50,6 @@ scene("game", () => {
     {
       tileWidth: TILE_WIDTH,
       tileHeight: TILE_HEIGHT,
-
       tiles: {
         "=": () => [
           sprite("steel"),
@@ -61,7 +69,7 @@ scene("game", () => {
       area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
       body(),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-      agent({ speed: 150, allowDiagonals: false }),
+      agent({ speed: speed, allowDiagonals: false }),
       tile(),
       "bean",
     ],
@@ -141,7 +149,7 @@ scene("game", () => {
     bean.move(...dir);
   });
   onClick(() => {
-    bean.setTarget(mousePos());
+    bean.setTarget(snapToTileCenter({ level: myLevel, pos: mousePos() }));
   });
   for (let i = 0; i < myLevel.numRows(); i++) {
     for (let j = 0; j < myLevel.numColumns(); j++) {
