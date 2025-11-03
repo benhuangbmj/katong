@@ -111,6 +111,7 @@ scene("game", () => {
     });
   }
   onKeyPress((key) => {
+    destroyTargetCircle();
     const currentTile = bean.tilePos;
     const currentPos = myLevel.tile2Pos(currentTile);
     const targetPos = [
@@ -153,7 +154,34 @@ scene("game", () => {
   bean.onUpdate(() => {
     bean.move(...dir);
   });
+  let targetCircle;
+  function destroyTargetCircle() {
+    if (targetCircle) {
+      targetCircle.destroy();
+    }
+  }
+  bean.onTargetReached(() => {
+    if (targetCircle) {
+      targetCircle.destroy();
+    }
+  });
   onClick(() => {
+    if (targetCircle) {
+      targetCircle.destroy();
+    }
+    targetCircle = myLevel.spawn(
+      [
+        circle(24, { fill: false }),
+        pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
+        outline(4, Color.GREEN),
+        animate(),
+        z(-1),
+      ],
+      myLevel.pos2Tile(mousePos())
+    );
+    targetCircle.animate("radius", [24, 16, 24], {
+      duration: 0.5,
+    });
     myLevel.invalidateNavigationMap();
     dir = [0, 0];
     if (bean.has("body")) {
