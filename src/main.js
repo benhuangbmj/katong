@@ -11,6 +11,16 @@ loadSprite("coin", "sprites/coin.png");
 loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
 loadSprite("ghosty", "sprites/ghosty.png");
+loadSprite("thief", "sprites/thief.png", {
+  sliceX: 3,
+  sliceY: 4,
+  anims: {
+    up: { from: 0, to: 2, loop: true },
+    right: { from: 3, to: 5, loop: true },
+    down: { from: 6, to: 8, loop: true },
+    left: { from: 9, to: 11, loop: true },
+  },
+});
 function snapToTileCenter({ level, pos }) {
   const tilePos = level.pos2Tile(pos);
   const tileWorldPos = level.tile2Pos(tilePos);
