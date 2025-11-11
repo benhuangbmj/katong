@@ -37,15 +37,6 @@ scene("game", () => {
       "= = == ====",
       "=         =",
       "===========",
-      // "===========",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "===========",
     ],
     {
       tileWidth: TILE_WIDTH,
@@ -112,6 +103,7 @@ scene("game", () => {
   }
   onKeyPress((key) => {
     destroyTargetCircle();
+    myLevel.invalidateNavigationMap();
     const currentTile = bean.tilePos;
     const currentPos = myLevel.tile2Pos(currentTile);
     const targetPos = [
