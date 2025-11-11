@@ -7,7 +7,16 @@ kaplay({
 
 loadRoot("./"); // A good idea for Itch.io publishing later
 loadSprite("bean", "sprites/bean.png");
-loadSprite("coin", "sprites/coin.png");
+loadSprite("coin", "sprites/shining-star-coin.png", {
+  sliceX: 6,
+  anims: {
+    shine: {
+      frames: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 5, 3],
+      speed: 24,
+      loop: true,
+    },
+  },
+});
 loadSprite("spike", "sprites/spike.png");
 loadSprite("steel", "sprites/steel.png");
 loadSprite("ghosty", "sprites/ghosty.png");
@@ -195,10 +204,11 @@ scene("game", () => {
     for (let j = 0; j < myLevel.numColumns(); j++) {
       const objs = myLevel.getAt(vec2(j, i));
       if (objs.length == 0) {
-        myLevel.spawn(
+        const coin = myLevel.spawn(
           [
-            sprite("coin"),
+            sprite("coin", { anim: "shine" }),
             area(),
+            scale(0.015),
             anchor("center"),
             pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
             z(-1),
@@ -206,7 +216,6 @@ scene("game", () => {
           vec2(j, i)
         );
         coinCount++;
-        const coin = myLevel.getAt(vec2(j, i))[0];
         coin.onCollide("bean", () => {
           destroy(coin);
           coinCount--;
