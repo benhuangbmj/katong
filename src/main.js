@@ -74,7 +74,7 @@ scene("game", () => {
   add([myLevel]);
   const bean = myLevel.spawn(
     [
-      sprite("bean"),
+      sprite("thief", { anim: "down" }),
       anchor("center"),
       area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
       body(),
