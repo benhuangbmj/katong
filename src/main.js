@@ -208,7 +208,6 @@ scene("game", () => {
           [
             sprite("coin", { anim: "shine" }),
             area(),
-            scale(0.015),
             anchor("center"),
             pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
             z(-1),
