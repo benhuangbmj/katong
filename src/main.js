@@ -141,18 +141,22 @@ scene("game", () => {
       switch (key) {
         case "right": {
           dir = [speed, 0];
+          bean.play("right");
           break;
         }
         case "left": {
           dir = [-speed, 0];
+          bean.play("left");
           break;
         }
         case "up": {
           dir = [0, -speed];
+          bean.play("up");
           break;
         }
         case "down": {
           dir = [0, speed];
+          bean.play("down");
           break;
         }
         default: {
