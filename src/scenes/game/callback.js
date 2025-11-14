@@ -1,24 +1,12 @@
 import level1 from "./levels/level1";
+import spawnPlayer from "./characters/player";
 export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
   const myLevel = level1(TILE_WIDTH, TILE_HEIGHT);
   const speed = 150;
   const difficulty = 0.8;
   let dir = [0, 0];
-  let coinCount = 0;
-  add([myLevel]);
-  const bean = myLevel.spawn(
-    [
-      sprite("thief", { anim: "down" }),
-      anchor("center"),
-      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
-      body(),
-      pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-      agent({ speed: speed, allowDiagonals: false }),
-      tile(),
-      "bean",
-    ],
-    vec2(1, 1)
-  );
+  add([myLevel, "level1"]);
+  const player = spawnPlayer({ myLevel, speed });
   const ghost = myLevel.spawn(
     [
       sprite("ghosty"),
@@ -33,11 +21,11 @@ export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
   );
   const chasePlayer = () => {
     return ghost.onUpdate(() => {
-      ghost.setTarget(bean.pos);
+      ghost.setTarget(player.pos);
     });
   };
   let chasingPlayer = chasePlayer();
-  bean.onCollide("ghost", () => {
+  player.onCollide("ghost", () => {
     go("lost");
   });
   function adjust(obj, cb = () => {}) {
@@ -57,40 +45,40 @@ export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
   onKeyPress((key) => {
     destroyTargetCircle();
     myLevel.invalidateNavigationMap();
-    const currentTile = bean.tilePos;
+    const currentTile = player.tilePos;
     const currentPos = myLevel.tile2Pos(currentTile);
     const targetPos = [
       currentPos.x + TILE_WIDTH / 2,
       currentPos.y + TILE_HEIGHT / 2,
     ];
     dir = [0, 0];
-    if (bean.has("body")) {
-      bean.unuse("body");
+    if (player.has("body")) {
+      player.unuse("body");
     }
-    bean.setTarget(vec2(...targetPos));
-    const adjustPos = bean.onTargetReached(() => {
-      if (!bean.has("body")) {
-        bean.use(body());
+    player.setTarget(vec2(...targetPos));
+    const adjustPos = player.onTargetReached(() => {
+      if (!player.has("body")) {
+        player.use(body());
       }
       switch (key) {
         case "right": {
           dir = [speed, 0];
-          bean.play("right");
+          player.play("right");
           break;
         }
         case "left": {
           dir = [-speed, 0];
-          bean.play("left");
+          player.play("left");
           break;
         }
         case "up": {
           dir = [0, -speed];
-          bean.play("up");
+          player.play("up");
           break;
         }
         case "down": {
           dir = [0, speed];
-          bean.play("down");
+          player.play("down");
           break;
         }
         default: {
@@ -100,8 +88,8 @@ export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
       adjustPos.cancel();
     });
   });
-  bean.onUpdate(() => {
-    bean.move(...dir);
+  player.onUpdate(() => {
+    player.move(...dir);
   });
   let targetCircle;
   function destroyTargetCircle() {
@@ -109,7 +97,7 @@ export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
       targetCircle.destroy();
     }
   }
-  bean.onTargetReached(() => {
+  player.onTargetReached(() => {
     if (targetCircle) {
       targetCircle.destroy();
     }
@@ -133,34 +121,9 @@ export default ({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }) => {
     });
     myLevel.invalidateNavigationMap();
     dir = [0, 0];
-    if (bean.has("body")) {
-      bean.unuse("body");
+    if (player.has("body")) {
+      player.unuse("body");
     }
-    bean.setTarget(snapToTileCenter({ level: myLevel, pos: mousePos() }));
+    player.setTarget(snapToTileCenter({ level: myLevel, pos: mousePos() }));
   });
-  for (let i = 0; i < myLevel.numRows(); i++) {
-    for (let j = 0; j < myLevel.numColumns(); j++) {
-      const objs = myLevel.getAt(vec2(j, i));
-      if (objs.length == 0) {
-        const coin = myLevel.spawn(
-          [
-            sprite("coin", { anim: "shine" }),
-            area(),
-            anchor("center"),
-            pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-            z(-1),
-          ],
-          vec2(j, i)
-        );
-        coinCount++;
-        coin.onCollide("bean", () => {
-          destroy(coin);
-          coinCount--;
-          if (coinCount == 0) {
-            go("end");
-          }
-        });
-      }
-    }
-  }
 };

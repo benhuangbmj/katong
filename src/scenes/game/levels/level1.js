@@ -1,5 +1,6 @@
 export default function (TILE_WIDTH, TILE_HEIGHT) {
-  return level(
+  let coinCount = 0;
+  const myLevel = level(
     [
       "===========",
       "=         =",
@@ -25,4 +26,34 @@ export default function (TILE_WIDTH, TILE_HEIGHT) {
       },
     }
   );
+  onAdd("level1", (myLevel) => {
+    for (let i = 0; i < myLevel.numRows(); i++) {
+      for (let j = 0; j < myLevel.numColumns(); j++) {
+        if (i == 1 && j == 1) continue;
+        const objs = myLevel.getAt(vec2(j, i));
+        if (objs.length == 0) {
+          const coin = myLevel.spawn(
+            [
+              sprite("coin", { anim: "shine" }),
+              area(),
+              anchor("center"),
+              pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
+              z(-1),
+            ],
+            vec2(j, i)
+          );
+          coinCount++;
+          coin.onCollide("player", () => {
+            destroy(coin);
+            coinCount--;
+            if (coinCount == 0) {
+              go("end");
+            }
+          });
+        }
+      }
+    }
+  });
+  const output = myLevel;
+  return output;
 }
