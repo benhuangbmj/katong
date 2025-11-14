@@ -1,4 +1,5 @@
 import kaplay from "kaplay";
+import loadAllSprites from "./loadSprite";
 //import "kaplay/global"; // uncomment if you want to use without the k. prefix
 
 kaplay({
@@ -6,30 +7,7 @@ kaplay({
 });
 
 loadRoot("./"); // A good idea for Itch.io publishing later
-loadSprite("bean", "sprites/bean.png");
-loadSprite("coin", "sprites/shining-star-coin.png", {
-  sliceX: 6,
-  anims: {
-    shine: {
-      frames: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 5, 3],
-      speed: 24,
-      loop: true,
-    },
-  },
-});
-loadSprite("spike", "sprites/spike.png");
-loadSprite("steel", "sprites/steel.png");
-loadSprite("ghosty", "sprites/ghosty.png");
-loadSprite("thief", "sprites/thief.png", {
-  sliceX: 3,
-  sliceY: 4,
-  anims: {
-    up: { from: 0, to: 2, loop: true },
-    right: { from: 3, to: 5, loop: true },
-    down: { from: 6, to: 8, loop: true },
-    left: { from: 9, to: 11, loop: true },
-  },
-});
+loadAllSprites();
 function snapToTileCenter({ level, pos }) {
   const tilePos = level.pos2Tile(pos);
   const tileWorldPos = level.tile2Pos(tilePos);
