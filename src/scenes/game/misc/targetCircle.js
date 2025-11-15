@@ -11,6 +11,11 @@ function get() {
 }
 
 function set(level, position) {
+  if (arguments.length == 0) {
+    targetCircle = null;
+    return;
+  }
+
   const [TILE_WIDTH, TILE_HEIGHT] = [level.tileWidth(), level.tileHeight()];
   targetCircle = level.spawn(
     [

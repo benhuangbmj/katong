@@ -3,6 +3,7 @@ import utils from "../../../../utils";
 const snapToTileCenter = utils.snapToTileCenter;
 import { player } from "../player";
 function createHandlers() {
+  targetCircle.set();
   const myLevel = player.getLevel();
   function handleKeyPress({ speed, dir, key }) {
     myLevel.invalidateNavigationMap();
