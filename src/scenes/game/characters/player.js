@@ -1,6 +1,9 @@
+import createHandlers from "./handlers/player";
+let player = null;
 export default function spawnPlayer({ myLevel, speed }) {
   const [TILE_WIDTH, TILE_HEIGHT] = [myLevel.tileWidth(), myLevel.tileHeight()];
-  return myLevel.spawn(
+  let dir = [0, 0];
+  player = myLevel.spawn(
     [
       sprite("thief", { anim: "down" }),
       anchor("center"),
@@ -13,4 +16,22 @@ export default function spawnPlayer({ myLevel, speed }) {
     ],
     vec2(1, 1)
   );
+  const handlers = createHandlers();
+  player.onKeyPress((key) => {
+    handlers.handleKeyPress({ speed, dir, key });
+  });
+  player.onUpdate(() => {
+    handlers.handleUpdate(dir);
+  });
+  player.onTargetReached(() => {
+    handlers.handleTargetReached();
+  });
+  onClick(() => {
+    handlers.handleClick(dir);
+  });
+  player.onCollide("ghost", () => {
+    go("lost");
+  });
+  return player;
 }
+export { player };
