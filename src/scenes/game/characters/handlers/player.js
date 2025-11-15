@@ -5,7 +5,6 @@ import { player } from "../player";
 function createHandlers() {
   const myLevel = player.getLevel();
   function handleKeyPress({ speed, dir, key }) {
-    targetCircle.destroy();
     myLevel.invalidateNavigationMap();
     const [TILE_WIDTH, TILE_HEIGHT] = [
       myLevel.tileWidth(),
@@ -60,6 +59,15 @@ function createHandlers() {
   function handleClick(dir) {
     const level = myLevel;
     const position = mousePos();
+    const tilePos = level.pos2Tile(position);
+    if (
+      tilePos.x >= level.numColumns() ||
+      tilePos.y >= level.numRows() ||
+      tilePos.x < 0 ||
+      tilePos.y < 0
+    ) {
+      return;
+    }
     myLevel.invalidateNavigationMap();
     targetCircle.destroy();
     targetCircle.set(level, position);
