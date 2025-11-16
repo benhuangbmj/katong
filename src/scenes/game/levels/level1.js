@@ -45,11 +45,11 @@ export default function (TILE_WIDTH, TILE_HEIGHT) {
           );
           coinCount++;
           coin.onCollide("player", () => {
-            destroy(coin);
-            coinCount--;
-            if (coinCount == 0) {
-              go("end");
-            }
+            wait(0.25, () => {
+              destroy(coin);
+              coinCount--;
+              if (coinCount == 0) wait(0.25, () => go("end"));
+            });
           });
         }
       }
