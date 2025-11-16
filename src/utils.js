@@ -26,5 +26,32 @@ function adjust(obj, cb = () => {}) {
     cb();
   });
 }
-
-export default { snapToTileCenter, chase, adjust };
+function playDirectionAnim({
+  character,
+  currDirection,
+  currPosition,
+  nextPosition,
+}) {
+  function getDirection(currPos, nextPos) {
+    const { x: currX, y: currY } = currPos;
+    const { x: nextX, y: nextY } = nextPos;
+    const deltaX = nextX - currX;
+    const deltaY = nextY - currY;
+    if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+      if (deltaX > 0) return "right";
+      if (deltaX < 0) return "left";
+    } else {
+      if (deltaY > 0) return "down";
+      if (deltaY < 0) return "up";
+    }
+    return null;
+  }
+  {
+    const direction = getDirection(currPosition, nextPosition);
+    if (direction != null && direction != currDirection) {
+      character.play(direction);
+      return direction;
+    } else return currDirection;
+  }
+}
+export default { snapToTileCenter, chase, adjust, playDirectionAnim };
