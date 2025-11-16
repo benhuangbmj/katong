@@ -11,6 +11,7 @@ function loadAllSprites() {
   });
   loadSprite("spike", "sprites/spike.png");
   loadSprite("steel", "sprites/steel.png");
+  loadSprite("floor", "sprites/tilestonebricks.png");
   loadSprite("thief", "sprites/thief.png", {
     sliceX: 3,
     sliceY: 4,

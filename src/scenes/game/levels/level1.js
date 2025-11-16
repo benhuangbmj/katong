@@ -29,9 +29,10 @@ export default function (TILE_WIDTH, TILE_HEIGHT) {
   onAdd("level1", (myLevel) => {
     for (let i = 0; i < myLevel.numRows(); i++) {
       for (let j = 0; j < myLevel.numColumns(); j++) {
-        if (i == 1 && j == 1) continue;
         const objs = myLevel.getAt(vec2(j, i));
         if (objs.length == 0) {
+          myLevel.spawn([sprite("floor"), z(-2), scale(4)], vec2(j, i));
+          if (i == 1 && j == 1) continue;
           const coin = myLevel.spawn(
             [
               sprite("coin", { anim: "shine" }),
