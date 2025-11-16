@@ -12,8 +12,11 @@ function chase(subject, target) {
     subject.setTarget(target.pos);
   });
 }
-function adjust(obj, cb = () => {}) {
+function adjustPosition(obj, cb = () => {}) {
   const currentTile = obj.tilePos;
+  const myLevel = obj.getLevel();
+  myLevel.invalidateNavigationMap();
+  const [TILE_WIDTH, TILE_HEIGHT] = [myLevel.tileWidth(), myLevel.tileHeight()];
   const currentPos = myLevel.tile2Pos(currentTile);
   const targetPos = [
     currentPos.x + TILE_WIDTH / 2,
@@ -21,9 +24,10 @@ function adjust(obj, cb = () => {}) {
   ];
   obj.unuse("body");
   obj.setTarget(vec2(...targetPos));
-  obj.onTargetReached(() => {
+  const onAdjustFinished = obj.onTargetReached(() => {
     obj.use(body());
     cb();
+    onAdjustFinished.cancel();
   });
 }
 function playDirectionAnim({
@@ -54,4 +58,4 @@ function playDirectionAnim({
     } else return currDirection;
   }
 }
-export default { snapToTileCenter, chase, adjust, playDirectionAnim };
+export default { snapToTileCenter, chase, adjustPosition, playDirectionAnim };

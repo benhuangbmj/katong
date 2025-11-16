@@ -6,53 +6,34 @@ function createHandlers() {
   targetCircle.set(); //reset the target circle when entering a new game
   const myLevel = player.getLevel();
   function handleKeyPress({ speed, dir, key }) {
-    myLevel.invalidateNavigationMap();
-    const [TILE_WIDTH, TILE_HEIGHT] = [
-      myLevel.tileWidth(),
-      myLevel.tileHeight(),
-    ];
-    const currentTile = player.tilePos;
-    const currentPos = myLevel.tile2Pos(currentTile);
-    const targetPos = [
-      currentPos.x + TILE_WIDTH / 2,
-      currentPos.y + TILE_HEIGHT / 2,
-    ];
-    [0, 0].forEach((e, i) => (dir[i] = e));
-    if (player.has("body")) {
-      player.unuse("body");
+    let nextDir;
+    switch (key) {
+      case "right": {
+        nextDir = [speed, 0];
+        break;
+      }
+      case "left": {
+        nextDir = [-speed, 0];
+        break;
+      }
+      case "up": {
+        nextDir = [0, -speed];
+        break;
+      }
+      case "down": {
+        nextDir = [0, speed];
+        break;
+      }
+      default: {
+        return;
+      }
     }
-    player.setTarget(vec2(...targetPos));
-    const adjustPos = player.onTargetReached(() => {
-      if (!player.has("body")) {
-        player.use(body());
-      }
-      switch (key) {
-        case "right": {
-          [speed, 0].forEach((e, i) => (dir[i] = e));
-          player.play("right");
-          break;
-        }
-        case "left": {
-          [-speed, 0].forEach((e, i) => (dir[i] = e));
-          player.play("left");
-          break;
-        }
-        case "up": {
-          [0, -speed].forEach((e, i) => (dir[i] = e));
-          player.play("up");
-          break;
-        }
-        case "down": {
-          [0, speed].forEach((e, i) => (dir[i] = e));
-          player.play("down");
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-      adjustPos.cancel();
-    });
+    Object.assign(dir, [0, 0]);
+    function changeDir() {
+      Object.assign(dir, nextDir);
+      player.play(key);
+    }
+    utils.adjustPosition(player, changeDir);
   }
   function handleTargetReached() {
     targetCircle.destroy();
