@@ -3,7 +3,7 @@ import utils from "../../../../utils";
 const snapToTileCenter = utils.snapToTileCenter;
 import { player } from "../player";
 function createHandlers() {
-  targetCircle.set();
+  targetCircle.set(); //reset the target circle when entering a new game
   const myLevel = player.getLevel();
   function handleKeyPress({ speed, dir, key }) {
     myLevel.invalidateNavigationMap();
@@ -78,8 +78,16 @@ function createHandlers() {
     }
     player.setTarget(snapToTileCenter({ level, position }));
   }
+  let currDirection;
   function handleUpdate(dir) {
-    player.move(...dir);
+    if (dir.some((e) => e !== 0)) player.move(...dir);
+    else if (player.pos != null && player.getNextLocation() != null)
+      currDirection = utils.playDirectionAnim({
+        character: player,
+        currDirection,
+        currPosition: player.pos,
+        nextPosition: player.getNextLocation(),
+      });
   }
   return { handleKeyPress, handleTargetReached, handleClick, handleUpdate };
 }
