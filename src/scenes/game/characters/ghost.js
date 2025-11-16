@@ -1,8 +1,11 @@
+import createHandlers from "./handlers/ghost";
+let ghost = null;
+
 export default function spawnGhost({ myLevel, speed, difficulty }) {
   const [TILE_WIDTH, TILE_HEIGHT] = [myLevel.tileWidth(), myLevel.tileHeight()];
-  return myLevel.spawn(
+  ghost = myLevel.spawn(
     [
-      sprite("ghosty"),
+      sprite("guardian"),
       anchor("center"),
       area({ shape: new Rect(vec2(0, 0), 0, 0) }),
       pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
@@ -12,4 +15,10 @@ export default function spawnGhost({ myLevel, speed, difficulty }) {
     ],
     vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
   );
+  const handlers = createHandlers();
+  ghost.onUpdate(() => {
+    handlers.handleUpdate();
+  });
+  return ghost;
 }
+export { ghost };
