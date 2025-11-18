@@ -12,6 +12,7 @@ function loadAllSprites() {
   loadSprite("spike", "sprites/spike.png");
   loadSprite("steel", "sprites/steel.png");
   loadSprite("floor", "sprites/tilestonebricks.png");
+  loadSprite("kaplay-dino", "sprites/kaplay_dino-o.png");
   loadSprite("thief", "sprites/thief.png", {
     sliceX: 3,
     sliceY: 4,
