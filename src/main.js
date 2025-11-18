@@ -14,6 +14,8 @@ loadRoot("./"); // A good idea for Itch.io publishing later
 
 loadAllSprites();
 
+add([sprite("kaplay-dino"), pos(width() - 210, 10), scale(0.5), stay()]);
+
 scene("game", () => sceneGame({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }));
 
 scene("end", () => {
