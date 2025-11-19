@@ -18,21 +18,23 @@ add([sprite("kaplay-dino"), pos(width() - 210, 10), scale(0.5), stay()]);
 scene("game", () => sceneGame({ snapToTileCenter, TILE_WIDTH, TILE_HEIGHT }));
 
 scene("end", () => {
-  utils.displaySceneMessage(import.meta.env.VITE_WIN_SCENE);
+  utils.displaySceneMessage(import.meta.env.VITE_WIN_SCENE || "You Win!");
   onTouchEnd(() => {
     go("game");
   });
 });
 
 scene("lost", () => {
-  utils.displaySceneMessage(import.meta.env.VITE_LOST_SCENE);
+  utils.displaySceneMessage(import.meta.env.VITE_LOST_SCENE || "You Die!");
   onTouchEnd(() => {
     go("game");
   });
 });
 
 scene("ready?", () => {
-  utils.displaySceneMessage(import.meta.env.VITE_READY_SCENE);
+  utils.displaySceneMessage(
+    import.meta.env.VITE_READY_SCENE || "Are You Ready?"
+  );
   onTouchEnd(() => {
     go("game");
   });
