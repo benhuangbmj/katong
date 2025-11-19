@@ -58,4 +58,40 @@ function playDirectionAnim({
     } else return currDirection;
   }
 }
-export default { snapToTileCenter, chase, adjustPosition, playDirectionAnim };
+function displaySceneMessage(message) {
+  const [WIDTH_OFFSET, HEIGHT_OFFSET] = [50, 125];
+  const mainText = add([
+    text(message, {
+      width: width() * 0.8,
+      size: width() > 1400 ? 128 : 64,
+      align: "left",
+    }),
+    pos(WIDTH_OFFSET, HEIGHT_OFFSET),
+    color("red"),
+  ]);
+  add([
+    text("ENTER: Start a game    ESC: Exit to work on your math homework", {
+      size: width() / 45,
+      width: width(),
+    }),
+    pos(WIDTH_OFFSET, 1.5 * HEIGHT_OFFSET + mainText.height),
+    color("blue"),
+  ]);
+  onKeyPress((key) => {
+    switch (key) {
+      case "enter":
+        go("game");
+        break;
+      case "escape":
+        quit();
+        break;
+    }
+  });
+}
+export default {
+  snapToTileCenter,
+  chase,
+  adjustPosition,
+  playDirectionAnim,
+  displaySceneMessage,
+};
