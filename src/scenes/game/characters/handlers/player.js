@@ -28,6 +28,7 @@ function createHandlers() {
         return;
       }
     }
+    if (JSON.stringify(nextDir) === JSON.stringify(dir)) return;
     Object.assign(dir, [0, 0]);
     function changeDir() {
       Object.assign(dir, nextDir);
