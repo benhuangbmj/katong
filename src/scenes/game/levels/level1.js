@@ -6,7 +6,7 @@ export default function (TILE_WIDTH, TILE_HEIGHT) {
     "=       ",
     "= ===== ",
     "=   =   ",
-    "==  = ==",
+    "= = = ==",
     "=       ",
   ];
   const myLevel = level(utils.mirrorLevel(quaterLevel), {

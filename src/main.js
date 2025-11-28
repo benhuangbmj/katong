@@ -17,9 +17,10 @@ const logo = add([
   pos((width() - 210) / 2, 10),
   scale(0.5),
   stay(),
+  z(-2),
 ]);
 
-scene("game", () => sceneGame({ TILE_WIDTH, TILE_HEIGHT, logo }));
+scene("game", () => sceneGame({ TILE_WIDTH, TILE_HEIGHT }));
 
 scene("end", () => {
   utils.displaySceneMessage(import.meta.env.VITE_WIN_SCENE || "You Win!");
