@@ -88,10 +88,20 @@ function displaySceneMessage(message) {
     }
   });
 }
+function mirrorLevel(levelArr) {
+  const output = levelArr.map((row) => {
+    const rowArr = row.split("");
+    rowArr.push(...rowArr.toReversed());
+    return rowArr.join("");
+  });
+  output.push(...output.toReversed());
+  return output;
+}
 export default {
   snapToTileCenter,
   chase,
   adjustPosition,
   playDirectionAnim,
   displaySceneMessage,
+  mirrorLevel,
 };
