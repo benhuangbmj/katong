@@ -2,14 +2,12 @@ import utils from "../../../utils";
 export default function (TILE_WIDTH, TILE_HEIGHT) {
   let coinCount = 0;
   const quaterLevel = [
-    "==========",
-    "=         ",
-    "= ==== == ",
-    "=      =  ",
-    "= ==== == ",
-    "= =       ",
-    "= = == ===",
-    "=         ",
+    "========",
+    "=       ",
+    "= ===== ",
+    "=   =   ",
+    "==  = ==",
+    "=       ",
   ];
   const myLevel = level(utils.mirrorLevel(quaterLevel), {
     tileWidth: TILE_WIDTH,

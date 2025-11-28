@@ -89,12 +89,17 @@ function displaySceneMessage(message) {
   });
 }
 function mirrorLevel(levelArr) {
-  const output = levelArr.map((row) => {
+  const output = levelArr.map((row, i) => {
     const rowArr = row.split("");
-    rowArr.push(...rowArr.toReversed());
-    return rowArr.join("");
+    const rowArrReversed = rowArr.toReversed();
+    rowArrReversed.shift();
+    rowArr.push(...rowArrReversed);
+    const output = rowArr.join("");
+    return output;
   });
-  output.push(...output.toReversed());
+  const outputReversedTruncated = [...output].toReversed();
+  outputReversedTruncated.shift();
+  output.push(...outputReversedTruncated);
   return output;
 }
 export default {
