@@ -154,7 +154,6 @@ function outputMaze(size) {
 }
 function outputRawMaze(size) {
   const rawMaze = generateRawMaze(generateLevelTemplate(size));
-  console.log(rawMaze);
   const output = rawMaze.map((row) => row.join(""));
   return output;
 }
