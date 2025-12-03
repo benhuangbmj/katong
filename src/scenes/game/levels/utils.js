@@ -1,3 +1,10 @@
+const directionPrototype = [
+  [-1, 0], // North
+  [1, 0], // South
+  [0, 1], // East
+  [0, -1], // West
+];
+
 function generateLevelTemplate(size) {
   const output = Array.from(Array(2 * size + 1), (_, i) => {
     if (i % 2 == 0) {
@@ -24,12 +31,7 @@ function generateRawMaze(board) {
 
   const visited = Array.from(Array(rows), () => Array(cols).fill(false));
 
-  const directions = [
-    [-1, 0], // North
-    [1, 0], // South
-    [0, 1], // East
-    [0, -1], // West
-  ];
+  const directions = [...directionPrototype];
 
   function shuffle(array) {
     const arr = [...array];
@@ -80,12 +82,7 @@ function generateRawMaze(board) {
 
   function getCorridorNeighbors(r, c) {
     const result = [];
-    const steps = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1],
-    ];
+    const steps = [...directionPrototype];
     for (const [dr, dc] of steps) {
       const nr = r + dr;
       const nc = c + dc;
@@ -104,12 +101,7 @@ function generateRawMaze(board) {
 
   function breakRandomInternalWallAround(r, c) {
     const wallCandidates = [];
-    const steps = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1],
-    ];
+    const steps = [...directionPrototype];
     for (const [dr, dc] of steps) {
       const wr = r + dr;
       const wc = c + dc;
@@ -129,7 +121,6 @@ function generateRawMaze(board) {
     changed = false;
     for (let r = 1; r < height - 1; r += 2) {
       for (let c = 1; c < width - 1; c += 2) {
-        if (board[r][c] !== " ") continue;
         const neighbors = getCorridorNeighbors(r, c);
         if (neighbors.length === 1) {
           // dead end: open one more wall
