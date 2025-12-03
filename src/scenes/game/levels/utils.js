@@ -42,15 +42,19 @@ function generateRawMaze(board) {
     return arr;
   }
 
+  // Recursive DFS function
   function dfs(row, col) {
     visited[row][col] = true;
 
+    // Randomize direction order
     const randomDirections = shuffle(directions);
 
+    let moved = false;
     for (const [dr, dc] of randomDirections) {
       const newRow = row + dr;
       const newCol = col + dc;
 
+      // Check if new position is valid and unvisited
       if (
         newRow >= 0 &&
         newRow < rows &&
@@ -58,81 +62,65 @@ function generateRawMaze(board) {
         newCol < cols &&
         !visited[newRow][newCol]
       ) {
+        moved = true;
+
+        // Convert cell coordinates to board coordinates
         const currentCellRow = row * 2 + 1;
         const currentCellCol = col * 2 + 1;
         const nextCellRow = newRow * 2 + 1;
         const nextCellCol = newCol * 2 + 1;
 
+        // Remove wall between current cell and next cell
         const wallRow = (currentCellRow + nextCellRow) / 2;
         const wallCol = (currentCellCol + nextCellCol) / 2;
         board[wallRow][wallCol] = " ";
 
+        // Continue DFS from new cell
         dfs(newRow, newCol);
       }
     }
-  }
 
-  // 1. Standard DFS maze
-  dfs(0, 0);
+    // If we didn't move (dead end), break a random non-perimeter wall adjacent to this cell
+    if (!moved) {
+      const currentCellRow = row * 2 + 1;
+      const currentCellCol = col * 2 + 1;
+      console.log("Dead end at:", currentCellRow, currentCellCol);
+      const candidates = [];
+      for (const [dr, dc] of directions) {
+        const nbrRow = row + dr;
+        const nbrCol = col + dc;
 
-  // 2. Post-process: remove all dead ends (no cell with degree 1)
-  function isInside(r, c) {
-    return r > 0 && r < height - 1 && c > 0 && c < width - 1;
-  }
+        // neighbor must be inside cell bounds
+        if (nbrRow >= 0 && nbrRow < rows && nbrCol >= 0 && nbrCol < cols) {
+          const nextCellRow = nbrRow * 2 + 1;
+          const nextCellCol = nbrCol * 2 + 1;
+          const wallRow = (currentCellRow + nextCellRow) / 2;
+          const wallCol = (currentCellCol + nextCellCol) / 2;
 
-  function getCorridorNeighbors(r, c) {
-    const result = [];
-    const steps = [...directionPrototype];
-    for (const [dr, dc] of steps) {
-      const nr = r + dr;
-      const nc = c + dc;
-      if (
-        nr >= 0 &&
-        nr < height &&
-        nc >= 0 &&
-        nc < width &&
-        board[nr][nc] === " "
-      ) {
-        result.push([nr, nc]);
-      }
-    }
-    return result;
-  }
-
-  function breakRandomInternalWallAround(r, c) {
-    const wallCandidates = [];
-    const steps = [...directionPrototype];
-    for (const [dr, dc] of steps) {
-      const wr = r + dr;
-      const wc = c + dc;
-      if (isInside(wr, wc) && board[wr][wc] !== " ") {
-        wallCandidates.push([wr, wc]);
-      }
-    }
-    if (wallCandidates.length === 0) return false;
-    const [wr, wc] =
-      wallCandidates[Math.floor(Math.random() * wallCandidates.length)];
-    board[wr][wc] = " ";
-    return true;
-  }
-
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let r = 1; r < height - 1; r += 2) {
-      for (let c = 1; c < width - 1; c += 2) {
-        const neighbors = getCorridorNeighbors(r, c);
-        if (neighbors.length === 1) {
-          // dead end: open one more wall
-          const opened = breakRandomInternalWallAround(r, c);
-          if (opened) {
-            changed = true;
+          // ensure wall is not on the board perimeter and currently closed
+          if (
+            wallRow > 0 &&
+            wallRow < height - 1 &&
+            wallCol > 0 &&
+            wallCol < width - 1 &&
+            board[wallRow][wallCol] !== " "
+          ) {
+            candidates.push({ wallRow, wallCol });
           }
         }
       }
+      console.log("Candidates for breaking dead end:", candidates);
+      if (candidates.length > 0) {
+        const pick = candidates[Math.floor(Math.random() * candidates.length)];
+        board[pick.wallRow][pick.wallCol] = " ";
+      }
     }
   }
 
+  // Start DFS from top-left corner (0, 0)
+  dfs(0, 0);
+  board[1][2] = " ";
+  board[2][1] = " ";
   return board;
 }
 
