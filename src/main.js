@@ -1,264 +1,47 @@
 import kaplay from "kaplay";
+import loadAllSprites from "./loadSprite";
+import utils from "./utils";
+import sceneGame from "./scenes/game/callback";
+const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
 //import "kaplay/global"; // uncomment if you want to use without the k. prefix
-
-kaplay({
+const k = kaplay({
   debugKey: "f2",
 });
 
 loadRoot("./"); // A good idea for Itch.io publishing later
-loadSprite("bean", "sprites/bean.png");
-loadSprite("coin", "sprites/coin.png");
-loadSprite("spike", "sprites/spike.png");
-loadSprite("steel", "sprites/steel.png");
-loadSprite("ghosty", "sprites/ghosty.png");
-function snapToTileCenter({ level, pos }) {
-  const tilePos = level.pos2Tile(pos);
-  const tileWorldPos = level.tile2Pos(tilePos);
-  const output = vec2(
-    tileWorldPos.x + 0.5 * level.tileWidth(),
-    tileWorldPos.y + 0.5 * level.tileHeight()
-  );
-  return output;
-}
-scene("game", () => {
-  let dir = [0, 0];
-  const speed = 150;
-  const difficulty = 0.8;
-  const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
-  let coinCount = 0;
-  const myLevel = level(
-    [
-      "===========",
-      "=         =",
-      "= ==== == =",
-      "=      =  =",
-      "= ==== == =",
-      "= =       =",
-      "= = == ====",
-      "=         =",
-      "===========",
-      // "===========",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "=         =",
-      // "===========",
-    ],
-    {
-      tileWidth: TILE_WIDTH,
-      tileHeight: TILE_HEIGHT,
-      tiles: {
-        "=": () => [
-          sprite("steel"),
-          area(),
-          body({ isStatic: true }),
-          tile({ isObstacle: true }),
-        ],
-        "^": () => [sprite("spike"), area()],
-      },
-    }
-  );
-  add([myLevel]);
-  const bean = myLevel.spawn(
-    [
-      sprite("bean"),
-      anchor("center"),
-      area({ shape: new Rect(vec2(0, 0), TILE_WIDTH, TILE_HEIGHT) }),
-      body(),
-      pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-      agent({ speed: speed, allowDiagonals: false }),
-      tile(),
-      "bean",
-    ],
-    vec2(1, 1)
-  );
-  const ghost = myLevel.spawn(
-    [
-      sprite("ghosty"),
-      anchor("center"),
-      area({ shape: new Rect(vec2(0, 0), 0, 0) }),
-      pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-      agent({ speed: speed * difficulty, allowDiagonals: false }),
-      tile({ isObstacle: true }),
-      "ghost",
-    ],
-    vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
-  );
-  const chasePlayer = () => {
-    return ghost.onUpdate(() => {
-      ghost.setTarget(bean.pos);
-    });
-  };
-  let chasingPlayer = chasePlayer();
-  bean.onCollide("ghost", () => {
-    go("lost");
-  });
-  function adjust(obj, cb = () => {}) {
-    const currentTile = obj.tilePos;
-    const currentPos = myLevel.tile2Pos(currentTile);
-    const targetPos = [
-      currentPos.x + TILE_WIDTH / 2,
-      currentPos.y + TILE_HEIGHT / 2,
-    ];
-    obj.unuse("body");
-    obj.setTarget(vec2(...targetPos));
-    obj.onTargetReached(() => {
-      obj.use(body());
-      cb();
-    });
-  }
-  onKeyPress((key) => {
-    destroyTargetCircle();
-    const currentTile = bean.tilePos;
-    const currentPos = myLevel.tile2Pos(currentTile);
-    const targetPos = [
-      currentPos.x + TILE_WIDTH / 2,
-      currentPos.y + TILE_HEIGHT / 2,
-    ];
-    dir = [0, 0];
-    if (bean.has("body")) {
-      bean.unuse("body");
-    }
-    bean.setTarget(vec2(...targetPos));
-    const adjustPos = bean.onTargetReached(() => {
-      if (!bean.has("body")) {
-        bean.use(body());
-      }
-      switch (key) {
-        case "right": {
-          dir = [speed, 0];
-          break;
-        }
-        case "left": {
-          dir = [-speed, 0];
-          break;
-        }
-        case "up": {
-          dir = [0, -speed];
-          break;
-        }
-        case "down": {
-          dir = [0, speed];
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-      adjustPos.cancel();
-    });
-  });
-  bean.onUpdate(() => {
-    bean.move(...dir);
-  });
-  let targetCircle;
-  function destroyTargetCircle() {
-    if (targetCircle) {
-      targetCircle.destroy();
-    }
-  }
-  bean.onTargetReached(() => {
-    if (targetCircle) {
-      targetCircle.destroy();
-    }
-  });
-  onClick(() => {
-    if (targetCircle) {
-      targetCircle.destroy();
-    }
-    targetCircle = myLevel.spawn(
-      [
-        circle(24, { fill: false }),
-        pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-        outline(4, Color.GREEN),
-        animate(),
-        z(-1),
-      ],
-      myLevel.pos2Tile(mousePos())
-    );
-    targetCircle.animate("radius", [24, 16, 24], {
-      duration: 0.5,
-    });
-    myLevel.invalidateNavigationMap();
-    dir = [0, 0];
-    if (bean.has("body")) {
-      bean.unuse("body");
-    }
-    bean.setTarget(snapToTileCenter({ level: myLevel, pos: mousePos() }));
-  });
-  for (let i = 0; i < myLevel.numRows(); i++) {
-    for (let j = 0; j < myLevel.numColumns(); j++) {
-      const objs = myLevel.getAt(vec2(j, i));
-      if (objs.length == 0) {
-        myLevel.spawn(
-          [
-            sprite("coin"),
-            area(),
-            anchor("center"),
-            pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
-            z(-1),
-          ],
-          vec2(j, i)
-        );
-        coinCount++;
-        const coin = myLevel.getAt(vec2(j, i))[0];
-        coin.onCollide("bean", () => {
-          destroy(coin);
-          coinCount--;
-          if (coinCount == 0) {
-            go("end");
-          }
-        });
-      }
-    }
-  }
-});
+
+loadAllSprites();
+
+const logo = add([
+  sprite("kaplay-dino"),
+  pos((width() - 210) / 2, 10),
+  scale(0.5),
+  stay(),
+  z(-2),
+]);
+
+scene("game", () => sceneGame({ TILE_WIDTH, TILE_HEIGHT }));
 
 scene("end", () => {
-  add([
-    text("You Win!", { size: 128 }),
-    pos(center()),
-    anchor("center"),
-    color("red"),
-  ]);
-  onKeyPress(() => {
-    go("game");
-  });
+  utils.displaySceneMessage(import.meta.env.VITE_WIN_SCENE || "You Win!");
   onTouchEnd(() => {
     go("game");
   });
 });
 
 scene("lost", () => {
-  add([
-    text("You Die!", { size: 128 }),
-    pos(center()),
-    anchor("center"),
-    color("red"),
-  ]);
-  onKeyPress(() => {
-    go("game");
-  });
+  utils.displaySceneMessage(import.meta.env.VITE_LOST_SCENE || "You Die!");
   onTouchEnd(() => {
     go("game");
   });
 });
 
 scene("ready?", () => {
-  add([
-    text("Press a key to start a game", { size: 32 }),
-    pos(center()),
-    anchor("center"),
-    color("blue"),
-  ]);
-  onKeyPress(() => {
-    go("game");
-  });
+  utils.displaySceneMessage(
+    import.meta.env.VITE_READY_SCENE || "Are You Ready?"
+  );
   onTouchEnd(() => {
     go("game");
   });
 });
-go("game");
+go("ready?");
