@@ -3,7 +3,6 @@
 - `src` - source code for your kaplay project
 - `dist` - distribution folder, contains your index.html, built js bundle and static assets
 
-
 ## Development
 
 ```sh
@@ -25,3 +24,7 @@ $ npm run zip
 ```
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+
+## Description
+
+This is a collection of educational games.
