@@ -2,6 +2,7 @@ import kaplay from "kaplay";
 import loadAllSprites from "./loadSprite";
 import utils from "./utils";
 import sceneGame from "./scenes/game/callback";
+const environment = import.meta.env.VITE_ENVIRONMENT ?? "ready?";
 const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
 //import "kaplay/global"; // uncomment if you want to use without the k. prefix
 const k = kaplay({
@@ -44,4 +45,4 @@ scene("ready?", () => {
     go("game");
   });
 });
-go("ready?");
+go(environment);
