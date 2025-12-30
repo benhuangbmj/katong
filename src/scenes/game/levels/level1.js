@@ -2,36 +2,25 @@ import utils from "../../../utils";
 import levelUtils from "./utils";
 export default function (TILE_WIDTH, TILE_HEIGHT) {
   let coinCount = 0;
-  const quaterLevel = [
-    "========",
-    "=       ",
-    "= ===== ",
-    "=   =   ",
-    "= = = ==",
-    "=       ",
-  ];
-  const myLevel = level(
-    /*utils.mirrorLevel(levelUtils.outputMaze(4))*/ levelUtils.outputRawMaze(6),
-    {
-      tileWidth: TILE_WIDTH,
-      tileHeight: TILE_HEIGHT,
-      tiles: {
-        "-": () => [
-          sprite("steel"),
-          area(),
-          body({ isStatic: true }),
-          tile({ isObstacle: true }),
-        ],
-        "|": () => [
-          sprite("steel"),
-          area(),
-          body({ isStatic: true }),
-          tile({ isObstacle: true }),
-        ],
-        "^": () => [sprite("spike"), area()],
-      },
-    }
-  );
+  const myLevel = level(levelUtils.outputRawMaze(6), {
+    tileWidth: TILE_WIDTH,
+    tileHeight: TILE_HEIGHT,
+    tiles: {
+      "-": () => [
+        sprite("steel"),
+        area(),
+        body({ isStatic: true }),
+        tile({ isObstacle: true }),
+      ],
+      "|": () => [
+        sprite("steel"),
+        area(),
+        body({ isStatic: true }),
+        tile({ isObstacle: true }),
+      ],
+      "^": () => [sprite("spike"), area()],
+    },
+  });
   onAdd("level1", (myLevel) => {
     for (let i = 0; i < myLevel.numRows(); i++) {
       for (let j = 0; j < myLevel.numColumns(); j++) {
