@@ -84,7 +84,6 @@ function generateRawMaze(board) {
     if (!moved) {
       const currentCellRow = row * 2 + 1;
       const currentCellCol = col * 2 + 1;
-      console.log("Dead end at:", currentCellRow, currentCellCol);
       const candidates = [];
       for (const [dr, dc] of directions) {
         const nbrRow = row + dr;
@@ -109,7 +108,6 @@ function generateRawMaze(board) {
           }
         }
       }
-      console.log("Candidates for breaking dead end:", candidates);
       if (candidates.length > 0) {
         const pick = candidates[Math.floor(Math.random() * candidates.length)];
         board[pick.wallRow][pick.wallCol] = " ";
