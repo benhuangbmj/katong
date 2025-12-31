@@ -1,4 +1,3 @@
-import utils from "../../../utils";
 import levelUtils from "./utils";
 export default function (TILE_WIDTH, TILE_HEIGHT) {
   let coinCount = 0;
