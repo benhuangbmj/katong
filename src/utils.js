@@ -33,10 +33,18 @@ function adjustPosition(obj, cb = () => {}) {
 function playDirectionAnim({
   character,
   currDirection,
-  currPosition,
-  nextPosition,
+  eventController,
+  endFrame = 0,
 }) {
+  const currPosition = character.pos;
+  const nextPosition = character.getNextLocation();
   function getDirection(currPos, nextPos) {
+    if (nextPos == null) {
+      eventController?.cancel();
+      character.stop();
+      character.frame = endFrame;
+      return null;
+    }
     const { x: currX, y: currY } = currPos;
     const { x: nextX, y: nextY } = nextPos;
     const deltaX = nextX - currX;
@@ -50,13 +58,11 @@ function playDirectionAnim({
     }
     return null;
   }
-  {
-    const direction = getDirection(currPosition, nextPosition);
-    if (direction != null && direction != currDirection) {
-      character.play(direction);
-      return direction;
-    } else return currDirection;
-  }
+  const direction = getDirection(currPosition, nextPosition);
+  if (direction != null && direction != currDirection) {
+    character.play(direction);
+    return direction;
+  } else return currDirection;
 }
 function displaySceneMessage(message) {
   const [WIDTH_OFFSET, HEIGHT_OFFSET] = [50, 125];
