@@ -59,7 +59,10 @@ function playDirectionAnim({
     return null;
   }
   const direction = getDirection(currPosition, nextPosition);
-  if (direction != null && direction != currDirection) {
+  if (
+    direction != null &&
+    (direction != currDirection || !character.getCurAnim())
+  ) {
     character.play(direction);
     return direction;
   } else return currDirection;
