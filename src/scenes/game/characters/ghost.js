@@ -16,8 +16,8 @@ export default function spawnGhost({ myLevel, speed, difficulty }) {
     vec2(myLevel.numColumns() - 2, myLevel.numRows() - 2)
   );
   const handlers = createHandlers();
-  ghost.onUpdate(() => {
-    handlers.handleUpdate();
+  const ghostUpdate = ghost.onUpdate(() => {
+    handlers.handleUpdate(ghostUpdate);
   });
   return ghost;
 }
