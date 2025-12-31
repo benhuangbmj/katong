@@ -2,6 +2,7 @@ import kaplay from "kaplay";
 import loadAllSprites from "./loadSprite";
 import utils from "./utils";
 import sceneGame from "./scenes/game/callback";
+import sceneGensomeAcademy from "./scenes/gensome-academy/callback";
 const environment = import.meta.env.VITE_ENVIRONMENT ?? "ready?";
 const [TILE_WIDTH, TILE_HEIGHT] = [64, 64];
 //import "kaplay/global"; // uncomment if you want to use without the k. prefix
@@ -22,6 +23,9 @@ const logo = add([
 ]);
 
 scene("game", () => sceneGame({ TILE_WIDTH, TILE_HEIGHT }));
+scene("gensome-academy", () =>
+  sceneGensomeAcademy({ TILE_WIDTH, TILE_HEIGHT })
+);
 
 scene("end", () => {
   utils.displaySceneMessage(import.meta.env.VITE_WIN_SCENE || "You Win!");
