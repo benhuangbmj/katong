@@ -33,5 +33,6 @@ function loadAllSprites() {
       left: { from: 9, to: 11, loop: true },
     },
   });
+  loadSprite("ginseng_root", "sprites/ginseng_root.png");
 }
 export default loadAllSprites;
