@@ -30,7 +30,7 @@ export default function (TILE_WIDTH, TILE_HEIGHT) {
           if (i == 1 && j == 1) continue;
           const coin = myLevel.spawn(
             [
-              sprite("coin", { anim: "shine" }),
+              sprite("ginseng_root", { width: TILE_WIDTH * 0.8 }),
               area(),
               anchor("center"),
               pos(TILE_WIDTH / 2, TILE_HEIGHT / 2),
